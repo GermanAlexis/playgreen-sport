@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { envs } from './config/envs';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { SwaggerConfig } from './config/swagger';
 
 async function bootstrap() {
   const logger = new Logger('Main');
@@ -13,6 +14,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  await SwaggerConfig.setup(app);
 
   await app.listen(envs.ports);
 
