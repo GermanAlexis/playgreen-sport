@@ -1,17 +1,21 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+
+import * as bcrypt from 'bcrypt';
 
 import { LoginDto } from '../infrastucture/dto/login-auth.dto';
 import { RegisterDto } from '../infrastucture/dto/register-auth.dto';
 import { JwtCustomService } from './jwt.service';
 
-import * as bcrypt from 'bcrypt';
-
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly jwtCustomService: JwtCustomService,
-    // private readonly userService: UserService, TODO? MAke service
-  ) {}
+  private logger = new Logger('AuthService');
+
+  constructor(private readonly jwtCustomService: JwtCustomService) {}
 
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
@@ -22,7 +26,7 @@ export class AuthService {
         message: 'user not found',
       });
 
-    const isMatch = await this.compareHash(password, user.password);
+    const isMatch = await this.compareHash(password, '12312');
 
     if (!isMatch)
       throw new BadRequestException({
@@ -30,9 +34,11 @@ export class AuthService {
         message: 'Verify Credentials',
       });
 
-    delete user.password;
-    const token = await this.jwtCustomService.signIn(user);
-    return { user, token };
+    // delete user.password;
+    const token = await this.jwtCustomService.signIn({
+      user,
+    } as unknown as RegisterDto);
+    return { token };
   }
 
   async register(registerDto: RegisterDto) {
@@ -45,13 +51,23 @@ export class AuthService {
       });
 
     const passHashed = await this.hashPass(registerDto.password);
-    const newUser = { password: '123' }; // TODO? Connect with user service create()
-    delete newUser.password;
-    return { newUser, passHashed, name };
+    const newUser = await this.createUser({
+      email,
+      name,
+      password: passHashed,
+    });
+    // delete newUser.password;
+    return { newUser };
   }
 
   private async findUserByEmail(email: string) {
-    return { email, password: '123', name: 'German' };
+    return { email };
+    // return this.user.findUnique({ where: { email } });
+  }
+
+  private async createUser(register: RegisterDto) {
+    return { register };
+    // return this.user.create({ data: register });
   }
 
   async verifyToken(token: string) {
