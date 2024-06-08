@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RegisterDto } from '../infrastucture/dto/register-auth.dto';
 import { envs } from 'src/config/envs';
+import { CreateUserDto } from 'src/core/user/infrastructure/dto/create-user.dto';
 
 @Injectable()
 export class JwtCustomService {
   constructor(private readonly jwtService: JwtService) {}
 
-  async signIn(payload: RegisterDto) {
+  async signIn(payload: CreateUserDto) {
     return this.jwtService.sign(payload);
   }
 

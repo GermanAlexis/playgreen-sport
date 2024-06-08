@@ -11,7 +11,7 @@ const config: DataSourceOptions = {
   // Only include necessary properties
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.ts,.js}'], // Array of strings for migration file paths
-  synchronize: false, // Or true for development only
+  synchronize: true, // Or true for development only
 };
 
 export default config;

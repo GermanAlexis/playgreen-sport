@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Req, HttpStatus } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { LoginDto } from './dto/login-auth.dto';
-import { RegisterDto } from './dto/register-auth.dto';
 import { Request } from 'express';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateUserDto } from 'src/core/user/infrastructure/dto/create-user.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -30,7 +30,7 @@ export class AuthController {
 
   @ApiBody({
     description: 'Register auth',
-    type: RegisterDto,
+    type: CreateUserDto,
     required: true,
   })
   @ApiResponse({
@@ -42,7 +42,7 @@ export class AuthController {
     description: 'verify information',
   })
   @Post('register')
-  register(@Body() registerDto: RegisterDto) {
+  register(@Body() registerDto: CreateUserDto) {
     return this.authService.register(registerDto);
   }
 

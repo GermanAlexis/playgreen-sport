@@ -7,15 +7,19 @@ import {
 
 import * as bcrypt from 'bcrypt';
 
-import { LoginDto } from '../infrastucture/dto/login-auth.dto';
-import { RegisterDto } from '../infrastucture/dto/register-auth.dto';
+import { LoginDto } from '../infrastructure/dto/login-auth.dto';
 import { JwtCustomService } from './jwt.service';
+import { CreateUserDto } from 'src/core/user/infrastructure/dto/create-user.dto';
+import { UserService } from 'src/core/user/application/user.service';
 
 @Injectable()
 export class AuthService {
   private logger = new Logger('AuthService');
 
-  constructor(private readonly jwtCustomService: JwtCustomService) {}
+  constructor(
+    private readonly jwtCustomService: JwtCustomService,
+    private readonly userService: UserService,
+  ) {}
 
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
@@ -26,7 +30,7 @@ export class AuthService {
         message: 'user not found',
       });
 
-    const isMatch = await this.compareHash(password, '12312');
+    const isMatch = await this.compareHash(password, user.password);
 
     if (!isMatch)
       throw new BadRequestException({
@@ -34,15 +38,13 @@ export class AuthService {
         message: 'Verify Credentials',
       });
 
-    // delete user.password;
-    const token = await this.jwtCustomService.signIn({
-      user,
-    } as unknown as RegisterDto);
+    delete user.password;
+    const token = await this.jwtCustomService.signIn({ ...user });
     return { token };
   }
 
-  async register(registerDto: RegisterDto) {
-    const { email, name } = registerDto;
+  async register(registerDto: CreateUserDto) {
+    const { email, password, ...rest } = registerDto;
     const user = await this.findUserByEmail(email);
     if (user)
       throw new BadRequestException({
@@ -50,24 +52,18 @@ export class AuthService {
         message: 'user not found',
       });
 
-    const passHashed = await this.hashPass(registerDto.password);
-    const newUser = await this.createUser({
+    const passHashed = await this.hashPass(password);
+    const newUser = await this.userService.create({
+      ...rest,
       email,
-      name,
       password: passHashed,
     });
-    // delete newUser.password;
+    delete newUser.password;
     return { newUser };
   }
 
   private async findUserByEmail(email: string) {
-    return { email };
-    // return this.user.findUnique({ where: { email } });
-  }
-
-  private async createUser(register: RegisterDto) {
-    return { register };
-    // return this.user.create({ data: register });
+    return this.userService.findOneByEmail(email);
   }
 
   async verifyToken(token: string) {
@@ -77,7 +73,7 @@ export class AuthService {
     return { user, token: newToken, iat, exp };
   }
 
-  private async hashPass(pass: string): Promise<string> {
+  async hashPass(pass: string): Promise<string> {
     const saltOrRounds = 10;
     return await bcrypt.hash(pass, saltOrRounds);
   }

@@ -1,60 +1,51 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { StateUser } from '../enums/state-user.enum';
+import { Column, Entity } from 'typeorm';
+import { UserState, RoleEnum } from '../enums/index';
+import { BaseEntity } from 'src/config/database/base-entity/base-entity';
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn('increment')
-  id: number;
+export class User extends BaseEntity {
+  @Column('int', { nullable: false, unique: true })
+  documentId: number;
 
-  @Column('int')
-  roleId: number;
-
-  @Column('varchar')
+  @Column('varchar', { nullable: false })
   firstName: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: false })
   lastName: string;
 
-  @Column('int')
+  @Column('varchar', { nullable: false })
   phone: number;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: false, unique: true })
   email: string;
 
-  @Column('varchar')
-  username: string;
+  @Column('varchar', { nullable: false })
+  password: string;
 
-  @Column('varchar')
-  address: string;
+  @Column('varchar', { nullable: false, unique: true })
+  userName: string;
 
   @Column('varchar')
   gender: 'M' | 'F';
 
   @Column('timestamp')
-  birth_date: Date;
+  birthDate: Date;
 
+  @Column('int')
   countryId: number;
 
   @Column('varchar')
   city: string;
 
   @Column('varchar')
+  address: string;
+
+  @Column('varchar')
   category: string;
 
-  @Column('int')
-  documentId: number;
+  @Column({ type: 'enum', enum: RoleEnum })
+  role: RoleEnum;
 
-  @Column({ type: 'enum', enum: StateUser })
-  userState: StateUser;
-
-  @Column('timestamp')
-  created_at: Date;
-
-  @Column('timestamp')
-  updated_at: Date;
-
-  deletedBy: User;
-
-  @Column('timestamp')
-  deleted_at: Date;
+  @Column({ type: 'enum', enum: UserState })
+  userState: UserState;
 }
