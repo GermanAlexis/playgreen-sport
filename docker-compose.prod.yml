@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  playgreen-database:
+    build: .
+    dockerfile: dockerfile.prod
+    args:
+      - MYSQL_ROOT_PASSWORD=${PASS_DATABASE}
+      - MYSQL_DATABASE=${NAME_DATABASE}
+      - MYSQL_USER=${USER_DATABASE}
+      - MYSQL_PASSWORD=${PASS_DATABASE}
+    image: playgreen-prod
+    environment:
+      - PORT=3001
+      - MYSQL_ROOT_PASSWORD=${PASS_DATABASE}
+      - MYSQL_DATABASE=${NAME_DATABASE}
+      - MYSQL_USER=${USER_DATABASE}
+      - MYSQL_PASSWORD=${PASS_DATABASE}

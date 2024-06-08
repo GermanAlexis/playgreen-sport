@@ -1,0 +1,18 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build',
+        '-t',
+        'southamerica-east1-docker.pkg.dev/backed-service-api/register-images',
+        '-f',
+        'dockerfile.prod',
+        '--platform=linux/amd64',
+        '.',
+      ]
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'push',
+        'southamerica-east1-docker.pkg.dev/backed-service-api/register-images',
+      ]
