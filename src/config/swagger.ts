@@ -7,14 +7,17 @@ export class SwaggerConfig {
       .setTitle('API Documentation')
       .setDescription('API documentation for PLAYGRREEN-SPORT')
       .setVersion('1.0')
-      .addBearerAuth({
-        type: 'http',
-        description: 'here you write token',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'Authorization',
-        in: 'header',
-      })
+      .addBearerAuth(
+        {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          name: 'JWT',
+          description: 'Enter JWT token',
+          in: 'header',
+        },
+        'JWT-auth',
+      )
       .build();
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('api', app, document);

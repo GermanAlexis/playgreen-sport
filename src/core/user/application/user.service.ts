@@ -42,6 +42,7 @@ export class UserService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto, getUser: User) {
+    console.log('getUser: ', getUser);
     const userToUpdate = await this.user.findOneByOrFail({ id });
     this.validateRoleAdmin(userToUpdate, getUser);
 

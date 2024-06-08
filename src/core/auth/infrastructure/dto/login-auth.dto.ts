@@ -5,6 +5,7 @@ export class LoginDto {
   @ApiProperty({
     name: 'email',
     required: true,
+    example: 'joedue@email.com',
     type: String,
   })
   @IsString()
@@ -14,6 +15,7 @@ export class LoginDto {
   @ApiProperty({
     name: 'password',
     required: true,
+    example: 'Abc123*789',
     type: String,
   })
   @IsStrongPassword()
