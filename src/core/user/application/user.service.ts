@@ -54,7 +54,7 @@ export class UserService {
   async validateRoleAdmin(userToUpdate: User, getUser: User) {
     if (
       userToUpdate.role === getUser.role ||
-      (userToUpdate.userState === UserState.BLOCK &&
+      (userToUpdate.userState === UserState.BLOCKED &&
         getUser.role === RoleEnum.ADMIN)
     )
       throw new BadRequestException({

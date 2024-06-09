@@ -23,7 +23,8 @@ export class AuthGuard implements CanActivate {
         secret: envs.jwtSecret,
       });
 
-      if (user.userState === UserState.BLOCK) throw new UnauthorizedException();
+      if (user.userState === UserState.BLOCKED)
+        throw new UnauthorizedException();
 
       request['user'] = user;
     } catch (error) {

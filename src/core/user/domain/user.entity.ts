@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { UserState, RoleEnum } from '../enums/index';
 import { BaseEntity } from 'src/config/database/base-entity/base-entity';
+import { UserBet } from './user-bet.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -48,4 +49,7 @@ export class User extends BaseEntity {
 
   @Column({ type: 'enum', enum: UserState })
   userState: UserState;
+
+  @ManyToOne(() => UserBet, (user) => user.user)
+  userBet: UserBet;
 }
