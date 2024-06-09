@@ -44,6 +44,9 @@ export class User extends BaseEntity {
   @Column('varchar')
   category: string;
 
+  @Column('int', { nullable: true })
+  balance: number;
+
   @Column({ type: 'enum', enum: RoleEnum })
   role: RoleEnum;
 

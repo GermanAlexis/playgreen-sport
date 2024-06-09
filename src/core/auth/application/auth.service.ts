@@ -11,6 +11,7 @@ import { LoginDto } from '../infrastructure/dto/login-auth.dto';
 import { JwtCustomService } from './jwt.service';
 import { CreateUserDto } from 'src/core/user/infrastructure/dto/create-user.dto';
 import { UserService } from 'src/core/user/application/user.service';
+import { User } from 'src/core/user/domain/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -44,7 +45,7 @@ export class AuthService {
   }
 
   async register(registerDto: CreateUserDto) {
-    const { email, password, ...rest } = registerDto;
+    const { email, ...rest } = registerDto;
     const user = await this.findUserByEmail(email);
     if (user)
       throw new BadRequestException({
@@ -52,11 +53,9 @@ export class AuthService {
         message: 'user not found',
       });
 
-    const passHashed = await this.hashPass(password);
     const newUser = await this.userService.create({
       ...rest,
       email,
-      password: passHashed,
     });
     delete newUser.password;
     return { newUser };
@@ -71,11 +70,6 @@ export class AuthService {
       await this.jwtCustomService.verifyToken(token);
     const newToken = await this.jwtCustomService.signIn(user);
     return { user, token: newToken, iat, exp };
-  }
-
-  async hashPass(pass: string): Promise<string> {
-    const saltOrRounds = 10;
-    return await bcrypt.hash(pass, saltOrRounds);
   }
 
   private async compareHash(

@@ -4,7 +4,7 @@ export enum UserState {
 }
 
 export enum UserBetState {
+  OPEN = 'open',
   WON = 'won',
   LOST = 'lost',
-  OPEN = 'open',
 }

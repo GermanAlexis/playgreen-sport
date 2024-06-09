@@ -70,7 +70,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     description: 'password',
-    example: 'Abc123*',
+    example: 'Abc123*789',
     type: String,
     required: true,
   })
@@ -157,19 +157,19 @@ export class CreateUserDto {
   category?: string;
 
   @ApiProperty({
-    description: 'State user',
+    description: 'user State',
     example: UserState.ACTIVE,
     required: false,
   })
   @IsEnum(UserState)
   @IsOptional()
-  stateUser?: UserState = UserState.ACTIVE;
+  userState?: UserState = UserState.ACTIVE;
 
   @ApiProperty({
     description: 'Role',
-    example: RoleEnum.CUSTOMER,
+    example: RoleEnum.USER,
     required: true,
   })
   @IsEnum(RoleEnum)
-  role: RoleEnum = RoleEnum.CUSTOMER;
+  role: RoleEnum = RoleEnum.USER;
 }

@@ -19,7 +19,7 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     const user = this.user.create(createUserDto);
-    user.createdBy = 1;
+    user.created = user;
     const passHashed = await this.hashPass(user.password);
     await this.user.save({ ...user, password: passHashed });
     const useReturn = await this.user.findOneBy({ id: user.id });
@@ -42,11 +42,11 @@ export class UserService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto, getUser: User) {
-    console.log('getUser: ', getUser);
     const userToUpdate = await this.user.findOneByOrFail({ id });
     this.validateRoleAdmin(userToUpdate, getUser);
 
     const userUpdated = await this.user.preload(updateUserDto);
+    userUpdated.updated = getUser;
     await this.user.save({ ...userUpdated });
     return this.user.find({ where: { id } });
   }

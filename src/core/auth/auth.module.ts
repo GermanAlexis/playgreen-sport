@@ -15,7 +15,7 @@ import { JwtCustomService } from './application/jwt.service';
     JwtModule.register({
       global: true,
       secret: envs.jwtSecret,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '60h' },
     }),
   ],
   providers: [AuthService, JwtCustomService],
