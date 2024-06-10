@@ -21,4 +21,6 @@ ENV PORT=80 \
     NAME_DATABASE=playgreen_db \
     JWT_SECRET=6aigoDIs8O76CnWwlUABeoEvl
 
-CMD npm run start:prod
+EXPOSE 3001
+
+CMD ["npm", "run", "start:prod"]
