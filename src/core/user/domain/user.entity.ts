@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { AfterInsert, BeforeInsert, Column, Entity, ManyToOne } from 'typeorm';
 import { UserState, RoleEnum } from '../enums/index';
 import { BaseEntity } from 'src/config/database/base-entity/base-entity';
 import { UserBet } from './user-bet.entity';
@@ -26,6 +26,12 @@ export class User extends BaseEntity {
   @Column('varchar', { nullable: false, unique: true })
   userName: string;
 
+  @Column({ type: 'float', nullable: false })
+  balance: number = 0.0;
+
+  @Column({ type: 'enum', enum: RoleEnum })
+  role: RoleEnum;
+
   @Column('varchar')
   gender: 'M' | 'F';
 
@@ -44,15 +50,15 @@ export class User extends BaseEntity {
   @Column('varchar')
   category: string;
 
-  @Column('int', { nullable: true })
-  balance: number;
-
-  @Column({ type: 'enum', enum: RoleEnum })
-  role: RoleEnum;
-
   @Column({ type: 'enum', enum: UserState })
   userState: UserState;
 
   @ManyToOne(() => UserBet, (user) => user.user)
   userBet: UserBet;
+
+  @BeforeInsert()
+  @AfterInsert()
+  setterUserName() {
+    this.userName ? this.userName : `${this.lastName}${this.documentId}`;
+  }
 }

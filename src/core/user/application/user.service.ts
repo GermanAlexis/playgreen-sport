@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -48,6 +53,37 @@ export class UserService {
     const userUpdated = await this.user.preload(updateUserDto);
     userUpdated.updated = getUser;
     await this.user.save({ ...userUpdated });
+    return this.user.find({ where: { id } });
+  }
+
+  async cashTransaction(
+    values: { id: number; amount: number; isWithDraw: boolean },
+    getUser: User,
+  ) {
+    const { id, amount, isWithDraw } = values;
+    const user = await this.user.findOneByOrFail({ id });
+    let currentAmount = user.balance;
+
+    if (isWithDraw) {
+      if (currentAmount < amount)
+        throw new ConflictException({
+          status: HttpStatus.CONFLICT,
+          message: `The current balance is less than the amount entered - The balance is ${currentAmount}.`,
+        });
+
+      currentAmount = currentAmount - amount;
+    } else {
+      currentAmount = currentAmount + amount;
+    }
+    return this.updateBalance(id, currentAmount, getUser);
+  }
+
+  async updateBalance(id: number, balance: number, getUser: User) {
+    await this.user.update(id, {
+      balance,
+      updated: getUser,
+    });
+
     return this.user.find({ where: { id } });
   }
 
