@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 import { BaseEntity } from 'src/config/database/base-entity/base-entity';
 import { UserBetState } from '../enums/state-user.enum';
 import { User } from './user.entity';
@@ -14,6 +14,10 @@ export class UserBet extends BaseEntity {
 
   @Column({ type: 'enum', enum: UserBetState, nullable: false })
   state: UserBetState;
+
+  @RelationId((ub: UserBet) => ub.bet)
+  @Column('int')
+  betId: number;
 
   @ManyToOne(() => User, (user) => user.userBet)
   user: User;

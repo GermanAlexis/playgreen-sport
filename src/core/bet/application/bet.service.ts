@@ -50,14 +50,14 @@ export class BetService {
 
   async update(id: number, updateBetDto: UpdateBetDto, user: User) {
     const betToUpdate = await this.findOne(id);
-    this.betSettler(betToUpdate);
+    this.betSettlerStatusValidate(betToUpdate);
     const betUpdate = await this.bet.preload({ id, ...updateBetDto });
     betUpdate.updated = user;
     await this.bet.save(betUpdate);
     return this.findOne(id);
   }
 
-  betSettler(bet: Bet) {
+  betSettlerStatusValidate(bet: Bet) {
     if (bet.status === StatusBet.SETTLED)
       throw new ConflictException({
         status: HttpStatus.CONFLICT,
