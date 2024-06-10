@@ -15,9 +15,16 @@ export class UserBet extends BaseEntity {
   @Column({ type: 'enum', enum: UserBetState, nullable: false })
   state: UserBetState;
 
+  @Column({ type: 'int', nullable: false })
+  optionSelected: number;
+
   @RelationId((ub: UserBet) => ub.bet)
   @Column('int')
   betId: number;
+
+  @RelationId((ub: UserBet) => ub.user)
+  @Column('int')
+  userId: number;
 
   @ManyToOne(() => User, (user) => user.userBet)
   user: User;

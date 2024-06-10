@@ -23,6 +23,16 @@ export class UserBetDto {
   })
   betId: number;
 
+  @IsNumber()
+  @IsPositive()
+  @ApiProperty({
+    type: Number,
+    description: 'option selected possible Bet winner',
+    example: 1,
+    name: 'optionSelected',
+  })
+  optionSelected: number;
+
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsPositive()
   @ApiProperty({
