@@ -13,7 +13,7 @@ COPY package*.json ./
 RUN npm install --only=production
 COPY --from=build /usr/src/app/dist ./dist
 
-ENV PORT=3001 \
+ENV PORT=80 \
     HOST_DATABASE=35.234.250.244 \
     PORT_DATABASE=3306 \
     USER_DATABASE=playgreen-user \
