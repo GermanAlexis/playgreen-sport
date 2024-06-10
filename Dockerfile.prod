@@ -1,0 +1,24 @@
+FROM node:21-alpine3.19 as build
+
+WORKDIR /usr/src/app
+COPY package*.json .
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM node:21-alpine3.19
+
+WORKDIR /usr/src/app
+COPY package*.json .
+RUN npm install --only=production
+COPY --from=build /usr/src/app/dist ./dist
+
+ENV PORT=3001 \
+    HOST_DATABASE=35.234.250.244 \
+    PORT_DATABASE=3306 \
+    USER_DATABASE=playgreen-user \
+    PASS_DATABASE=<u71{y#Fk=zGF<zT \
+    NAME_DATABASE=playgreen_db \
+    JWT_SECRET=6aigoDIs8O76CnWwlUABeoEvl
+
+CMD npm run start:prod
