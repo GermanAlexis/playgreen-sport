@@ -14,12 +14,15 @@ import { User } from '../domain/user.entity';
 
 import { RoleEnum, UserState } from '../enums';
 import { PaginationDto } from 'src/core/common/dtos/pagination.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { CategoriesTransaction } from 'src/core/transaction/enums/categories.enum';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly user: Repository<User>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -72,8 +75,16 @@ export class UserService {
         });
 
       currentAmount = currentAmount - amount;
+      this.eventEmitter.emit(CategoriesTransaction.WITHDRAW, {
+        amount,
+        user: user.id,
+      });
     } else {
       currentAmount = currentAmount + amount;
+      this.eventEmitter.emit(CategoriesTransaction.DEPOSIT, {
+        amount,
+        user: user.id,
+      });
     }
     return this.updateBalance(id, currentAmount, getUser);
   }
