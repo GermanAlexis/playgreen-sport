@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  playgreen-database:
+    container_name: playgreen-database
+    image: mysql:latest
+    restart: always
+    volumes:
+      - database_data:/var/lib/mysql
+    ports:
+      - "${PORT_DATABASE}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PASS_DATABASE}
+      MYSQL_DATABASE: ${NAME_DATABASE}
+      MYSQL_USER: ${USER_DATABASE}
+      MYSQL_PASSWORD: ${PASS_DATABASE}
+
+volumes:
+  database_data:
