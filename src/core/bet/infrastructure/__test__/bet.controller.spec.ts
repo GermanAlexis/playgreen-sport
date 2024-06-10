@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BetService } from '../application/bet.service';
-import { BetController } from './bet.controller';
+import { BetService } from '../../application/bet.service';
+import { BetController } from '../bet.controller';
 
 describe('BetController', () => {
   let controller: BetController;
