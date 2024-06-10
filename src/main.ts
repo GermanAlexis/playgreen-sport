@@ -15,7 +15,7 @@ async function bootstrap() {
     }),
   );
 
-  await SwaggerConfig.setup(app);
+  SwaggerConfig.setup(app);
 
   await app.listen(envs.ports);
 
