@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Transaction } from '../domain/transaction.entity';
@@ -5,6 +6,8 @@ import { In, Repository } from 'typeorm';
 import { OnEvent } from '@nestjs/event-emitter';
 import { CategoriesTransaction } from '../enums/categories.enum';
 import { SearchTransactionDto } from '../dtos/search.dto';
+import { User } from 'src/core/user/domain/user.entity';
+import { RoleEnum } from 'src/core/user/enums';
 
 @Injectable()
 export class TransactionService {
@@ -13,9 +16,9 @@ export class TransactionService {
     private readonly trans: Repository<Transaction>,
   ) {}
 
-  async getTransaction(searchTransaction: SearchTransactionDto) {
+  async getTransaction(searchTransaction: SearchTransactionDto, user: User) {
     const { limit, skip, ...rest } = searchTransaction;
-    const where = this.buildFilter(rest);
+    const where = this.buildFilter(rest, user);
     return this.trans.findAndCount({
       where,
       take: limit,
@@ -65,9 +68,16 @@ export class TransactionService {
     await this.trans.save(t);
   }
 
-  buildFilter(filter: { usersIds: number[]; category: CategoriesTransaction }) {
+  buildFilter(
+    filter: { usersIds: number[]; category: CategoriesTransaction },
+    user: User,
+  ) {
+    let us;
+    if (user.role === RoleEnum.ADMIN) us = In(filter.usersIds);
+    if (user.role === RoleEnum.USER) us = user.id;
+
     return {
-      userId: filter.usersIds ? In(filter.usersIds) : undefined,
+      userId: us,
       category: filter.category ? filter.category : undefined,
     };
   }
