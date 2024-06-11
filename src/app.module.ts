@@ -7,6 +7,8 @@ import { AuthModule } from './core/auth/auth.module';
 import { BetModule } from './core/bet/bet.module';
 import { TransactionModule } from './core/transaction/transaction.module';
 import config from './config/database/typeorm';
+import { APP_FILTER } from '@nestjs/core';
+import { DatabaseExceptionFilter } from './core/common/filters/database.filter';
 
 @Module({
   imports: [
@@ -18,6 +20,12 @@ import config from './config/database/typeorm';
     UserModule,
     BetModule,
     TransactionModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: DatabaseExceptionFilter,
+    },
   ],
 })
 export class AppModule {}

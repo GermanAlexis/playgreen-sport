@@ -11,12 +11,15 @@ import { User } from '../domain/user.entity';
 import { BetBulkDto } from '../infrastructure/dto/bet-bulk.dto';
 import { Bet } from 'src/core/bet/domain/bet.entity';
 import { StatusBet } from 'src/core/bet/enums/status-bet.enum';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { CategoriesTransaction } from 'src/core/transaction/enums/categories.enum';
 
 @Injectable()
 export class UserBetService {
   constructor(
     @InjectRepository(UserBet)
     private readonly userBetRepository: Repository<UserBet>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async processBets(items: BetBulkDto, user: User) {
@@ -32,6 +35,10 @@ export class UserBetService {
         const userBet = this.userBetRepository.create(bet);
         userBet.created = user;
         await this.userBetRepository.save(userBet);
+        this.eventEmitter.emit(CategoriesTransaction.BET, {
+          amount: bet.amount,
+          userId: user.id,
+        });
       }
 
       const balance =
