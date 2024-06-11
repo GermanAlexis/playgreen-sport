@@ -2,6 +2,22 @@
 
 This README provides a basic guide to run and understand a Nest.js project, including the application endpoints and their capabilities.
 
+
+
+## IMPORTAN THIS TEMPORAL
+
+This credencial data base
+
+```
+HOST_DATABASE=35.234.250.244
+PORT_DATABASE=3306
+USER_DATABASE=playgreen-user
+PASS_DATABASE="<u71{y#Fk=zGF<zT"
+NAME_DATABASE=playgreen_db
+```
+
+after test review  would  remove it
+
 ---
 
 ### Running the Project
