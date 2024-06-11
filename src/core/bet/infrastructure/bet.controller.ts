@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Controller,
   Get,
@@ -30,15 +31,20 @@ export class BetController {
   ) {}
 
   @Post()
+  @ApiOperation({
+    summary: 'Create Bet',
+    description:
+      'Create a new bet by specifying the event and the winning bet option.',
+  })
   create(@Body() createBetDto: CreateBetDto, @GetUser() user: User) {
     return this.betService.create(createBetDto, user);
   }
 
   @Post('settler')
   @ApiOperation({
+    summary: 'Settle Bet',
     description:
-      'here it is possible to settle bets instead of the id of the events and the winning bet option',
-    summary: 'Settler bet endpoint',
+      'Settle bets for the specified events and set the winning bet option.',
   })
   settler(@Body() settlerDto: SettlerDto, @GetUser() user: User) {
     return this.betSettlerService.betSettlerChange(
@@ -49,17 +55,30 @@ export class BetController {
   }
 
   @Post('search')
+  @ApiOperation({
+    summary: 'Search Bets',
+    description:
+      'Search and filter bets based on the criteria provided in the request body.',
+  })
   findAll(@Body() searchDto: SearchDto) {
     return this.betService.findAll(searchDto);
   }
 
   @Get(':id')
+  @ApiOperation({
+    summary: 'Get Bet by ID',
+    description: 'Get the details of a specific bet by its unique identifier.',
+  })
   findOne(@Param('id') id: string) {
     return this.betService.findOne(+id);
   }
 
   @Patch(':id')
-  Update(
+  @ApiOperation({
+    summary: 'Update Bet',
+    description: 'Update the details of an existing bet identified by its ID.',
+  })
+  update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateBetDto: UpdateBetDto,
     @GetUser() user,
