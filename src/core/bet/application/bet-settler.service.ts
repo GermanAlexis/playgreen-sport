@@ -6,12 +6,15 @@ import { User } from 'src/core/user/domain/user.entity';
 import { StatusBet } from '../enums/status-bet.enum';
 import { UserBet } from 'src/core/user/domain/user-bet.entity';
 import { UserBetState } from 'src/core/user/enums/state-user.enum';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { CategoriesTransaction } from 'src/core/transaction/enums/categories.enum';
 
 @Injectable()
 export class BetSettlerService {
   constructor(
     @InjectRepository(Bet)
     private readonly betRepository: Repository<Bet>,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async betSettlerChange(ids: number[], betOptionWin: 1 | 2 | 3, user: User) {
@@ -50,6 +53,7 @@ export class BetSettlerService {
     betOptionWin: number,
   ) {
     return trx.find(UserBet, {
+      relations: ['user', 'bet'],
       where: {
         bet: In(betsToSettler),
         state: UserBetState.OPEN,
@@ -64,14 +68,16 @@ export class BetSettlerService {
     user: User,
   ) {
     for (const userWinner of usersWon) {
-      const balanceWon = userWinner.amount * userWinner.odd;
-      const userFound = await trx.findOneBy(User, { id: userWinner.userId });
-
-      if (userFound) {
-        userFound.balance += balanceWon;
-        userFound.updated = user;
-        await trx.save(userFound);
-      }
+      console.log('userWinner: ', userWinner);
+      const balanceWon = userWinner.amount * userWinner.bet.odd;
+      userWinner.user.balance += balanceWon;
+      userWinner.updated = user;
+      await trx.save(userWinner);
+      this.eventEmitter.emit(CategoriesTransaction.WINNING, {
+        amount: userWinner.user.balance,
+        userId: userWinner.id,
+        userBet: userWinner.id,
+      });
     }
   }
 
@@ -86,22 +92,28 @@ export class BetSettlerService {
         where: {
           bet: In(betsToSettler),
           state: UserBetState.OPEN,
-          optionSelected: betOptionWin,
+          optionSelected: !betOptionWin,
         },
       },
-      { state: UserBetState.WON },
+      { state: UserBetState.LOST },
     );
+  }
 
+  async updateUserWon(
+    trx: EntityManager,
+    betsToSettler: Bet[],
+    betOptionWin: number,
+  ) {
     await trx.update(
       UserBet,
       {
         where: {
           bet: In(betsToSettler),
           state: UserBetState.OPEN,
-          optionSelected: !betOptionWin,
+          optionSelected: betOptionWin,
         },
       },
-      { state: UserBetState.LOST },
+      { state: UserBetState.WON },
     );
   }
 

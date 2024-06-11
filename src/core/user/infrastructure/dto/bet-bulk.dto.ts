@@ -8,7 +8,7 @@ export class BetBulkDto {
   @ApiProperty({
     type: Array,
     name: 'items',
-    example: [{ odd: 1.2, betId: 1, amount: 1000, state: 'open' }],
+    example: [{ optionSelected: 1, betId: 1, amount: 1000, state: 'open' }],
     description: 'Could bet in bulk',
   })
   items: UserBetDto[];
