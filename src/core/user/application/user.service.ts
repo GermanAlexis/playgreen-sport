@@ -29,8 +29,8 @@ export class UserService {
     const user = this.user.create(createUserDto);
     user.created = user;
     const passHashed = await this.hashPass(user.password);
-    await this.user.save({ ...user, password: passHashed });
-    const useReturn = await this.user.findOneBy({ id: user.id });
+    const newUser = await this.user.save({ ...user, password: passHashed });
+    const useReturn = await this.user.findOneBy({ id: newUser.id });
     delete useReturn.password;
     return useReturn;
   }
@@ -77,13 +77,13 @@ export class UserService {
       currentAmount = currentAmount - amount;
       this.eventEmitter.emit(CategoriesTransaction.WITHDRAW, {
         amount,
-        user: user.id,
+        userId: user.id,
       });
     } else {
       currentAmount = currentAmount + amount;
       this.eventEmitter.emit(CategoriesTransaction.DEPOSIT, {
         amount,
-        user: user.id,
+        userId: user.id,
       });
     }
     return this.updateBalance(id, currentAmount, getUser);

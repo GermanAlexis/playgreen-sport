@@ -20,6 +20,7 @@ export class TransactionService {
     const { limit, skip, ...rest } = searchTransaction;
     const where = this.buildFilter(rest, user);
     return this.trans.findAndCount({
+      relations: ['user'],
       where,
       take: limit,
       skip,
@@ -58,13 +59,13 @@ export class TransactionService {
   async withdraw(t: { amount: number; userId: number }) {
     await this.createTransaction({
       amount: t.amount,
-      category: CategoriesTransaction.WINNING,
+      category: CategoriesTransaction.WITHDRAW,
       userId: t.userId,
     });
   }
 
   async createTransaction(createTrans: Partial<Transaction>) {
-    const t = this.trans.create(createTrans);
+    const t = this.trans.create({ ...createTrans });
     await this.trans.save(t);
   }
 
@@ -73,7 +74,8 @@ export class TransactionService {
     user: User,
   ) {
     let us;
-    if (user.role === RoleEnum.ADMIN) us = In(filter.usersIds);
+    if (user.role === RoleEnum.ADMIN)
+      us = filter.usersIds ? In(filter.usersIds) : undefined;
     if (user.role === RoleEnum.USER) us = user.id;
 
     return {
