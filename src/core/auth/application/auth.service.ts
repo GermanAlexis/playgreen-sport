@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   BadRequestException,
   HttpStatus,
@@ -11,7 +12,6 @@ import { LoginDto } from '../infrastructure/dto/login-auth.dto';
 import { JwtCustomService } from './jwt.service';
 import { CreateUserDto } from 'src/core/user/infrastructure/dto/create-user.dto';
 import { UserService } from 'src/core/user/application/user.service';
-import { User } from 'src/core/user/domain/user.entity';
 
 @Injectable()
 export class AuthService {
