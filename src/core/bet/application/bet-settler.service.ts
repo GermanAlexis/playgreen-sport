@@ -68,7 +68,6 @@ export class BetSettlerService {
     user: User,
   ) {
     for (const userWinner of usersWon) {
-      console.log('userWinner: ', userWinner);
       const balanceWon = userWinner.amount * userWinner.bet.odd;
       userWinner.user.balance += balanceWon;
       userWinner.updated = user;
