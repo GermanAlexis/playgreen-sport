@@ -7,9 +7,6 @@ import { Bet } from 'src/core/bet/domain/bet.entity';
 @Entity()
 export class UserBet extends BaseEntity {
   @Column({ type: 'float', nullable: false })
-  odd: number;
-
-  @Column({ type: 'float', nullable: false })
   amount: number;
 
   @Column({ type: 'enum', enum: UserBetState, nullable: false })

@@ -53,6 +53,7 @@ export class BetSettlerService {
     betOptionWin: number,
   ) {
     return trx.find(UserBet, {
+      relations: ['user', 'bet'],
       where: {
         bet: In(betsToSettler),
         state: UserBetState.OPEN,
@@ -67,19 +68,15 @@ export class BetSettlerService {
     user: User,
   ) {
     for (const userWinner of usersWon) {
-      const balanceWon = userWinner.amount * userWinner.odd;
-      const userFound = await trx.findOneBy(User, { id: userWinner.userId });
-
-      if (userFound) {
-        userFound.balance += balanceWon;
-        userFound.updated = user;
-        await trx.save(userFound);
-        this.eventEmitter.emit(CategoriesTransaction.WINNING, {
-          amount: userFound.balance,
-          userId: userFound.id,
-          userBet: userFound.userBet.id,
-        });
-      }
+      const balanceWon = userWinner.amount * userWinner.bet.odd;
+      userWinner.user.balance += balanceWon;
+      userWinner.updated = user;
+      await trx.save(userWinner);
+      this.eventEmitter.emit(CategoriesTransaction.WINNING, {
+        amount: userWinner.user.balance,
+        userId: userWinner.id,
+        userBet: userWinner.id,
+      });
     }
   }
 

@@ -3,16 +3,6 @@ import { IsNumber, IsPositive, IsEnum, IsNotEmpty } from 'class-validator';
 import { UserBetState } from '../../enums/state-user.enum';
 
 export class UserBetDto {
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @IsPositive()
-  @ApiProperty({
-    type: Number,
-    description: 'Option possible quote bet',
-    example: 1.2,
-    name: 'odd',
-  })
-  odd: number;
-
   @IsNumber()
   @IsPositive()
   @ApiProperty({
